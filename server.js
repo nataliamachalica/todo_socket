@@ -25,7 +25,7 @@ app.use((req, res) => {
 
 io.on('connection', (socket) => {
 
-	console.log('New client! Id:' + socket.id);
+	console.log('New client! id:' + socket.id);
 
 	socket.emit('updateData', tasks);
 
