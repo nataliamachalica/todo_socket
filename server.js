@@ -27,6 +27,8 @@ io.on('connection', (socket) => {
 
 	console.log('New client! Id:' + socket.id);
 
+	socket.emit('updateData', tasks);
+
 	socket.on('addTask', newTask => {
 		console.log('New task added ', newTask, 'by user: ' + socket.id);
     tasks.push(newTask);
@@ -38,6 +40,4 @@ io.on('connection', (socket) => {
 		task.splice(id, 1);
 		socket.broadcast.emit('removeTask', id);
 	});
-
-	socket.emit('updateData', tasks);
 });
