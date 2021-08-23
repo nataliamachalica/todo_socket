@@ -36,6 +36,7 @@ io.on('connection', (socket) => {
 	});
 
 	socket.on('removeTask', (id) => {
+		const index = tasks.indexOf(tasks.find(task => task.id === id));
 		console.log('Task removed', id);
 		task.splice(id, 1);
 		socket.broadcast.emit('removeTask', id);
