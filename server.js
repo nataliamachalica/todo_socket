@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
+
 const socket = require('socket.io');
+
 const app = express();
 
 let tasks = [];
@@ -38,4 +40,5 @@ io.on('connection', socket => {
 		tasks.splice(taskToRemove, 1);
 		socket.broadcast.emit('removeTask', taskId);
 	});
+
 });
