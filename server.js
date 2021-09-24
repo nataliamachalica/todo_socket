@@ -1,44 +1,41 @@
 const express = require('express');
 const cors = require('cors');
-
 const socket = require('socket.io');
-const app = express();
 
-app.use(cors());
+const app = express();
 
 const tasks = [];
 
-const server = app.listen(process.env.PORT || 8000, () => {
-	console.log('Server is running on port 8000')
-});
+const corsOptions = {
+	origin: 'http://localhost:3000',
+	optionsSuccessStatus: 200,
+};
 
-const io = socket(server, {
-	cors: {
-		origin: '*',
-		methods: ['GET', 'POST']
-	}
-});
+app.use(cors(corsOptions));
 
 app.use((req, res) => {
-	res.status(404).send('404 not found')
+	res.status(404).send('page not found');
+})
+
+const server = app.listen(process.env.PORT || 6000, () => {
+	console.log('Server is running on port 6000: http://localhost:6000')
 });
 
-io.on('connection', (socket) => {
+const io = socket(server);
+
+io.on('connection', socket => {
+	socket.emit('updateData', tasks);
 
 	console.log('New client! id:' + socket.id);
 
-	socket.emit('updateData', tasks);
-
-	socket.on('addTask', newTask => {
+	socket.on('addTask', taskName => {
 		console.log('New task added ', newTask, 'by user: ' + socket.id);
-    tasks.push(newTask);
-		socket.broadcast.emit('addTask', newTask);
+    tasks.push(taskName);
+		socket.broadcast.emit('addTask', taskName);
 	});
 
-	socket.on('removeTask', (id) => {
-		const index = tasks.indexOf(tasks.find(task => task.id === id));
-		console.log('Task removed', id);
-		task.splice(id, 1);
-		socket.broadcast.emit('removeTask', id);
+	socket.on('removeTask', taskIndex => {
+		tasks.splice(taskIndex, 1);
+		socket.broadcast.emit('removeTask', taskIndex);
 	});
 });
